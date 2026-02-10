@@ -145,9 +145,10 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       
-      <form id="deleteForm" method="POST">
+      <form id="deleteForm" method="POST" action="{{ route('members.destroy') }}">
         @csrf
         @method('DELETE')
+        <input type="hidden" name="id" id="deleteMemberId">
 
         <div class="modal-header bg-danger">
           <h5 class="modal-title text-white" id="deleteModalLabel">
@@ -228,20 +229,12 @@
 
 @section('scripts')
 <script>
-  $('#deleteModal').on('show.bs.modal', function (event) {
-    const button = $(event.relatedTarget)
-    const memberId = button.data('id')
-    const memberName = button.data('name')
+    $('#deleteModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget)
 
-    const modal = $(this)
-    modal.find('#memberName').text(memberName)
-
-    const action = "{{ route('members.destroy', ':id') }}"
-    modal.find('#deleteForm').attr(
-      'action',
-      action.replace(':id', memberId)
-    )
-  })
+      $('#memberName').text(button.data('name'))
+      $('#deleteMemberId').val(button.data('id'))
+    })
 </script>
 
 <script>

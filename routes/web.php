@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store', [MemberController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [MemberController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [MemberController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [MemberController::class, 'destroy'])->name('destroy');
+        Route::delete('/delete', [MemberController::class, 'destroy'])->name('destroy');
     });
 
     // Access Logs

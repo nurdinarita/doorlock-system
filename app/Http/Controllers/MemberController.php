@@ -84,8 +84,9 @@ class MemberController extends Controller
         return redirect()->route('members.index')->with('success', 'Member updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
+        $id = $request->input('id');
         $member = Member::findOrFail($id);
         if ($member->image) {
             Storage::disk('public')->delete($member->image);
