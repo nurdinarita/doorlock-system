@@ -8,5 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+    
+    protected $fillable = [
+        'name',
+        'email',
+        'image',
+        'card_uid',
+    ];
+
+    public function accessLogs()
+    {
+        return $this->hasMany(AccessLog::class);
+    }
 }

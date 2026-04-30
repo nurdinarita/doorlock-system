@@ -21,8 +21,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/rfid', [RFIDController::class, 'readRFID']);
+Route::get('/last-rfid', [RFIDController::class, 'getLastRFID']);
 
-Route::get('/last-rfid', function () {
-    return response()->json(Cache::get('last_rfid'));
+Route::get('/test', function() {
+    return response()->json([
+        'message' => 'API is working',
+        'timestamp' => now(),
+    ]);
 });
 

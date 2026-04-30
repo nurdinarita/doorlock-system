@@ -10,55 +10,71 @@ use App\Models\AccessLog;
 
 class RFIDController extends Controller
 {
-    public function readRFID(Request $request) {
+    public function readRFID(Request $request)
+    {
+        // $request->validate([
+        //     'rfid_tag' => 'required|string',
+        //     'mode' => 'required|string|in:read,add/update',
+        //     'action' => 'required_if:mode,read|string|in:entry,exit',
+        // ]);
+
         $rfidTag = $request->input('rfid_tag');
-        $mode = $request->input('mode');
+        $mode = strtolower($request->input('mode'));
+        
 
-        if(strtolower($mode) === 'read')
-        {
-            $action = $request->input('action');
+        if ($mode === 'read') {
+            $action = strtolower($request->input('action'));
             $member = Member::where('card_uid', $rfidTag)->first();
-            if($member && $action)
-            {
-                // Log access
-                $AccessLog = AccessLog::create([
-                    'member_id' => $member->id,
-                    'card_uid' => $rfidTag,
-                    'action' => $action,
-                ]);
 
-                if(!$AccessLog)
-                {
-                    return response()->json([
-                        'message' => 'Failed to log access'
-                    ], 500);
-                }
-
-                return response()->json([
-                    'message' => 'Member found',
-                    'member' => $member
-                ], 200);
-            }
-            else
-            {
+            if (!$member) {
                 return response()->json([
                     'message' => 'Member not found'
                 ], 404);
             }
-        }
 
-        if (strtolower($mode) === 'add/update') {
+            // Log access
+            $accessLog = AccessLog::create([
+                'member_id' => $member->id,
+                'card_uid' => $rfidTag,
+                'action' => $action,
+                'logged_at' => now(),
+            ]);
 
-            Cache::put('last_rfid', [
-                'uid'  => $request->rfid_tag,
-                'time' => now()->timestamp,
-            ], now()->addMinutes(2)); // lebih manusiawi
+            if (!$accessLog) {
+                return response()->json([
+                    'message' => 'Failed to log access'
+                ], 500);
+            }
 
             return response()->json([
-                'message' => 'RFID Recieved',
-                'uid'     => $request->rfid_tag,
+                'message' => 'Access granted',
+                'member' => [
+                    'name' => $member->name,
+                    'image' => asset('storage/' . $member->image),
+                ]
+            ], 200);
+        }
+
+        if ($mode === 'add/update') {
+            Cache::put('last_rfid', [
+                'uid'  => $rfidTag,
+                'time' => now()->timestamp,
+            ], now()->addMinutes(2));
+
+            return response()->json([
+                'message' => 'RFID received',
+                'uid'     => $rfidTag,
                 'time'    => now()->timestamp,
             ]);
         }
+    }
+
+    public function getLastRFID()
+    {
+        $lastRfid = Cache::get('last_rfid');
+        return response()->json($lastRfid ?: [
+            'uid' => null,
+            'time' => null,
+        ]);
     }
 }

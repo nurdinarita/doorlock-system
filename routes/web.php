@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Access Logs
     Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access-logs.index');
+    Route::get('/access-logs/pdf', [AccessLogController::class, 'exportPdf'])->name('access-logs.pdf');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

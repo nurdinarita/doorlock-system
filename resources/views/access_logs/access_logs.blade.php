@@ -32,6 +32,12 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
+                    {{-- <a href="{{ route('access-logs.pdf', request()->all()) }}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </a> --}}
+                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalExportPDF">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
                     <form method="GET" action="{{ route('access-logs.index') }}" class="ml-auto">
                         <div class="input-group input-group-sm">
                             <input
@@ -126,4 +132,41 @@
     <!-- /.container-fluid -->
 </section>
 <!-- /.content -->
+
+<!-- Modal Pilih Tanggal -->
+<div class="modal fade" id="modalExportPDF" tabindex="-1" role="dialog" aria-labelledby="modalExportPDFLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExportPDFLabel">Export Log ke PDF</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('access-logs.pdf') }}" method="GET">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="start_date">Tanggal Awal</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="end_date">Tanggal Akhir</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Pilih rentang waktu log yang ingin di-export.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Export Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

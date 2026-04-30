@@ -15,16 +15,14 @@ class MemberController extends Controller
         $search = $request->input('search');
         $perPage = 10;
 
-        if ($search) {
-            $members = Member::where('name', 'like', '%' . $search . '%')
+        $members = Member::when($search, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%')
                 ->orWhere('email', 'like', '%' . $search . '%')
-                ->orWhere('card_uid', 'like', '%' . $search . '%')
-                ->orderBy('name', 'asc')
-                ->paginate($perPage)
-                ->appends(['search' => $search]);
-        }else{
-            $members = Member::orderBy('name', 'asc')->paginate($perPage);
-        }
+                ->orWhere('card_uid', 'like', '%' . $search . '%');
+        })
+        ->orderBy('name', 'asc')
+        ->paginate($perPage)
+        ->withQueryString();
         
         return view('members.members', compact('members'));
     }
